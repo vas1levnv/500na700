@@ -12,7 +12,6 @@ const concat = require('gulp-concat');
 // Подключаем gulp-uglify-es
 const uglify = require('gulp-uglify-es').default;
 
-// Подключаем модули gulp-sass и gulp-less
 const less = require('gulp-less');
 
 // Подключаем Autoprefixer
@@ -47,7 +46,7 @@ function scripts() {
 }
 
 function styles() {
-    return src('app/' + preprocessor + '/main.' + preprocessor + '') // Выбираем источник: "app/sass/main.sass" или "app/less/main.less"
+    return src('app/' + preprocessor + '/main.' + preprocessor + '')
         .pipe(eval(preprocessor)()) // Преобразуем значение переменной "preprocessor" в функцию
         .pipe(concat('app.min.css')) // Конкатенируем в файл app.min.js
         .pipe(autoprefixer({ overrideBrowserslist: ['last 10 versions'], grid: true })) // Создадим префиксы с помощью Autoprefixer
@@ -58,7 +57,7 @@ function styles() {
 
 async function images() {
     imagecomp(
-        "app/images/app/**/*", // Берём все изображения из папки источника
+        "app/images/src/**/*", // Берём все изображения из папки источника
         "app/images/dest/", // Выгружаем оптимизированные изображения в папку назначения
         { compress_force: false, statistic: true, autoupdate: true }, false, // Настраиваем основные параметры
         { jpg: { engine: "mozjpeg", command: ["-quality", "75"] } }, // Сжимаем и оптимизируем изображеня
@@ -103,7 +102,7 @@ function startwatch() {
     watch('app/**/*.html').on('change', browserSync.reload);
 
     // Мониторим папку-источник изображений и выполняем images(), если есть изменения
-    watch('app/images/app/**/*', images);
+    watch('app/images/src/**/*', images);
 
 }
 
@@ -122,6 +121,8 @@ exports.images = images;
 // Экспортируем функцию cleanimg() как таск cleanimg
 exports.cleanimg = cleanimg;
 
+// Создаем новый таск "build", который последовательно выполняет нужные операции
 exports.build = series(cleandist, styles, scripts, images, buildcopy);
 
+// Экспортируем дефолтный таск с нужным набором функций
 exports.default = parallel(styles, scripts, browsersync, startwatch);

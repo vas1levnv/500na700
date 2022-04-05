@@ -1,8 +1,3 @@
-import Swiper from 'swiper';
-import 'swiper/css';
-
-
-
 const accordion = document.getElementsByClassName('info__item');
 for (i = 0; i < accordion.length; i++) {
     accordion[i].addEventListener('click', function () {
